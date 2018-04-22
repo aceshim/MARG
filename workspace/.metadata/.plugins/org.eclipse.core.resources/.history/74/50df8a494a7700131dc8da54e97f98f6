@@ -1,0 +1,55 @@
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+
+public class RemoveErrorFiles {
+	
+	private static Path path = new Path();
+	private static String ALLFILE = path.getFileName();
+	//private static String ALLFILE = "D:/Data/CleanVoice_fileList.txt";
+	private static String ERRORFILE = path.getErrorFile();
+	//private static String ERRORFILE = "D:/Data/CleanVoice_errorList.txt";
+	private static String OUTPUTFILE = path.getFolderPath() + "_fileList_errorRemoved_consonant.txt";
+	//private static String OUTPUTFILE = "D:/Data/CleanVoice_fileList_errorRemoved.txt";
+	
+	public static void start(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		List<String> allFiles = new ArrayList<String>();
+		List<String> errorFiles = new ArrayList<String>();
+		
+		Scanner scanner = new Scanner(new FileInputStream(ALLFILE));
+		while(scanner.hasNext()) {
+			String line = scanner.nextLine();
+			allFiles.add(line);
+		}
+		scanner.close();
+		
+		scanner = new Scanner(new FileInputStream(ERRORFILE));
+		while(scanner.hasNext()) {
+			String line = scanner.nextLine();
+			errorFiles.add(line);
+		}
+		
+		for(String s:errorFiles) {
+			allFiles.remove(s);
+		}
+
+		printFileList(allFiles);
+	}
+	
+	private static void printFileList(List<String> fileList) throws IOException {
+		Writer out = new OutputStreamWriter(new FileOutputStream(OUTPUTFILE));
+		String NL = System.getProperty("line.separator");
+
+		for(String s:fileList)
+				out.write(s+NL);
+		
+		out.close();
+	}
+}

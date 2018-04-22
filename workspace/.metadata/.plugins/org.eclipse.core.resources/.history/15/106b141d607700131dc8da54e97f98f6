@@ -1,0 +1,49 @@
+import java.io.*;
+import java.util.*;
+
+
+public class Main {
+	private static GetFilesFromPath gffp = new GetFilesFromPath();
+	private static GetStartEndTime gset = new GetStartEndTime();
+	private static RemoveErrorFiles ref = new RemoveErrorFiles();
+	private static GetSevenVowels gsv = new GetSevenVowels();
+	private static GetConsonants gc = new GetConsonants();
+	
+	
+	public static void main(String[] args) throws IOException {
+		System.out.println("------Process Start------\n\n");
+		Scanner sc = new Scanner(System.in);
+		Path path = new Path();
+		
+		System.out.println("Enter Folder Path: ");
+		path.setFolderPath(sc.nextLine());
+		path.setFileName(path.getFolderPath()+"/CleanVoice_filelist.txt");
+		path.setErrorFile(path.getFolderPath()+"/CleanVoice_errorList.txt");
+		sc.close();
+		
+		System.out.println("Getting Files from Path..");
+		gffp.start();
+		System.out.println("Done\n");
+		
+		System.out.println("Getting Start & End Time.. ");
+		gset.start();
+		System.out.println("Done\n");
+		
+		System.out.println("Removing Error Files.. ");
+		ref.start();
+		System.out.println("Done\n");
+		
+		System.out.println("Getting Consonants..");
+		gc.start();
+		System.out.println("Done\n");
+		
+		System.out.println("Getting Vowels..");
+		gsv.start();
+		System.out.println("Done\n");
+		
+		
+		
+		//deleteSpecificFiles.start();
+		
+	}
+}

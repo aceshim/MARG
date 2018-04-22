@@ -1,0 +1,48 @@
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class DeleteSpecificFiles {
+
+	/**
+	 * @param args
+	 */
+	private static String FOLDERPATH = "D:/Data/CleanVoice";
+	/**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		
+		List<File> fileList = new ArrayList<File>();
+		final File folder = new File(FOLDERPATH);
+		listFilesForFolder(folder, fileList);
+		deleteFile(fileList);
+		
+	}
+
+	private static void deleteFile(List<File> fileList) throws IOException {
+
+		for(File f:fileList) {
+			String[] tmp = f.getAbsolutePath().split("\\.");
+			if(tmp[tmp.length-1].equalsIgnoreCase("set"))
+				f.delete();
+		}
+	}
+	
+	private static void listFilesForFolder(final File folder, List<File> fileList) {
+		File[] filesInFolder = folder.listFiles();
+		if(filesInFolder != null) {
+			for(final File fileEntry:filesInFolder) {
+				if(fileEntry.isDirectory())
+					listFilesForFolder(fileEntry, fileList);
+				else
+					fileList.add(fileEntry);
+			}
+		}
+	}
+
+}

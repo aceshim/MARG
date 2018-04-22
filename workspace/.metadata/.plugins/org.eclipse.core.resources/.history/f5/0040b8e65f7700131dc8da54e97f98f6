@@ -1,0 +1,59 @@
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class GetFilesFromPath {
+	
+	private static Path path = new Path();
+	private static String FOLDERPATH = path.getFolderPath();
+	private static String OUTPUTFILE = path.getFileName();
+	/*private static String FOLDERPATH = "D:/Data/CleanVoice";
+	private static String OUTPUTFILE = "D:/Data/CleanVoice_fileList.txt";
+	*/
+	/**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public void start() throws IOException {
+		// TODO Auto-generated method stub
+		
+		List<File> fileList = new ArrayList<File>();
+		final File folder = new File(FOLDERPATH);
+		listFilesForFolder(folder, fileList);
+		printFileList(fileList);
+		
+	}
+
+	private static void printFileList(List<File> fileList) throws IOException {
+		Writer out = new OutputStreamWriter(new FileOutputStream(OUTPUTFILE));
+		String NL = System.getProperty("line.separator");
+		int count = 0;
+		for(File f:fileList) {
+			String[] tmp = f.getAbsolutePath().split("\\.");
+			if(tmp[tmp.length-1].equalsIgnoreCase("wav"))
+				out.write(f.getAbsolutePath()+NL);
+			count++;
+			if(count%2044 == 0)
+				System.out.printf(".");
+		}
+		
+		out.close();
+	}
+	
+	private static void listFilesForFolder(final File folder, List<File> fileList) {
+		File[] filesInFolder = folder.listFiles();
+		if(filesInFolder != null) {
+			for(final File fileEntry:filesInFolder) {
+				if(fileEntry.isDirectory())
+					listFilesForFolder(fileEntry, fileList);
+				else
+					fileList.add(fileEntry);
+			}
+		}
+	}
+}

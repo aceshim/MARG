@@ -1,0 +1,27 @@
+
+public class Path {
+	
+	public Path(){
+		
+	}
+	
+	public String getFileName(){
+		return fileName;
+	}
+	
+	public void setFileName(String fileName){
+		this.fileName = fileName;
+	}
+	
+	public String getErrorFile(){
+		return errorFile;
+	}
+	
+	public void setErrorFile(String errorFile){
+		this.errorFile = errorFile;
+	}
+	
+	private String fileName = "D:/Data/CleanVoice_fileList.txt";
+	private String errorFile = "D:/Data/CleanVoice_errorList.txt";
+			
+}

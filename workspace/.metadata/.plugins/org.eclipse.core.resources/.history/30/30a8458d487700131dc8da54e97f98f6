@@ -1,0 +1,20 @@
+import java.io.*;
+import java.util.*;
+
+public class Ex01 {
+	private static Path path = new Path();
+	private static String PREFIX = path.getFolderPath()+ "/CleanVoice_";
+	private static String EXTENSION = ".txt";
+	private static String VALIDFILES = path.getFolderPath() + "_fileList";
+	
+	public static void main(String[] args) throws IOException {
+		Scanner sc = new Scanner(new FileInputStream(VALIDFILES));
+		System.out.println("Currently gathering");
+		while(sc.hasNext()){
+			String file = sc.nextLine();
+			file = file.replace(".wav",".phn");
+			System.out.println(file);
+		}
+		sc.close();
+	}
+}

@@ -1,0 +1,64 @@
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Scanner;
+
+
+public class GetStartEndTime {
+	private static Path path = new Path();
+	private static String FILENAME = path.getFileName();
+	private static String ERRORFILE = path.getErrorFile();
+	/**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		Scanner scanner = new Scanner(new FileInputStream(FILENAME));
+		String NL = System.getProperty("line.separator");
+		Writer log = new OutputStreamWriter(new FileOutputStream(ERRORFILE));
+		
+		while(scanner.hasNext()) {
+			String[] tmp = scanner.nextLine().split("\\.");
+			String phnFile = tmp[0] + ".phn";
+			String outputFile = tmp[0] + ".set";
+			String firstLine = null;
+			String lastLine = null;
+			boolean isFirstLine = false;
+			Scanner scanner2 = new Scanner(new FileInputStream(phnFile));
+			while(scanner2.hasNext()) {
+				lastLine = scanner2.nextLine();
+				if(isFirstLine) {
+					firstLine = lastLine;
+					isFirstLine = false;
+				}
+				if(lastLine.contains("#"))
+					isFirstLine = true;
+			}
+			
+			if(firstLine != null && lastLine != null) {
+				String startTime = firstLine.replace(" ", "").substring(0, 8);
+				String endTime = lastLine.replace(" ", "").substring(0, 8);
+				if(isNumber(startTime) && isNumber(endTime)) {
+					Writer out = new OutputStreamWriter(new FileOutputStream(outputFile));
+					out.write(startTime + "\t" + endTime);
+					out.close();
+				}
+				else
+					log.write(tmp[0] + ".wav" + NL);
+			}
+			else
+				log.write(tmp[0] + ".wav" + NL);
+		}
+		log.close();
+	}
+
+	private static boolean isNumber(String s) {
+		return s.startsWith("0") || s.startsWith("1") || s.startsWith("2")
+				|| s.startsWith("3") || s.startsWith("4") || s.startsWith("5")
+				|| s.startsWith("6") || s.startsWith("7") || s.startsWith("8")
+				|| s.startsWith("9");
+	}
+}

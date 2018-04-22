@@ -1,0 +1,108 @@
+import java.io.*;
+import java.util.*;
+/*import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Scanner;
+*/
+
+public class GetConsonants {
+
+	private static Path path = new Path();
+	private static String PREFIX = path.getFolderPath() + "/CleanVoice_";
+	private static String[] OUTFILENAMES = {"b","p","BB","d","t","DD","g","k","GG","s","SS","h","z","c","ZZ","m","n","N","l"};
+	//private static String[] OUTFILENAMES = {"ah", "eo", "o", "u", "eu", "e", "ae", "ae2"};
+	private static String EXTENSION = ".txt";
+	private static String[] CONSONANTLABELS = {"b","p","B","d","t","D","g","k","G","s","S","h","z","c","Z","m","n","N","l"};
+	//private static String[] VOWELLABELS = {"a", "v", "o", "u", "U", "i", "e", "E"};
+	private static String VALIDFILES = path.getFolderPath() + "/fileList_errorRemoved.txt";
+
+	/**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public void start() throws IOException {
+		// TODO Auto-generated method stub
+		int fileIndex = 0;
+		
+		for(String consonant:CONSONANTLABELS) {
+			System.out.printf("Currently gathering consonants %s.\n", consonant);
+			Scanner scanner = new Scanner(new FileInputStream(VALIDFILES));
+			ArrayList<Consonants> consonants = new ArrayList<Consonants>();
+			int count = 0;
+			while(scanner.hasNext()) {
+				String file = scanner.nextLine();
+				file = file.replace(".wav", ".phn");
+				retrieveConsonants(file, consonant, consonants);
+				count++;
+				if(count%2044 == 0)
+					System.out.printf(".");
+			}
+			scanner.close();
+			System.out.println();
+			writeConsonantFiles(PREFIX + OUTFILENAMES[fileIndex] + EXTENSION, consonants);
+			fileIndex++;
+		}
+	}
+
+	
+	private static void retrieveConsonants(String filename, String consonant, ArrayList<Consonants> consonantList) throws FileNotFoundException {
+		Scanner scanner = new Scanner(new FileInputStream(filename));
+		ArrayList<String> timeList = new ArrayList<String>();
+		filename = filename.replace(".phn", ".wav");
+		
+		boolean isFirstLine = false;
+		while(scanner.hasNext()) {
+			String line = scanner.nextLine();
+			
+			if(isFirstLine) {
+				timeList.add(line);
+			}
+			
+			if(line.equals("#"))
+				isFirstLine = true;
+		}
+		
+		
+		for(int i = 0; i < timeList.size(); i++) {
+			String line = timeList.get(i);
+			String label = line.substring(18, line.length());
+
+			if(label.equals(consonant) && i != timeList.size() - 1) {
+				String sTime = line.substring(4, 12);
+				String eTime = timeList.get(i + 1).substring(4, 12);
+				Consonants toAdd = getConsonant(filename, sTime, eTime);
+				consonantList.add(toAdd);
+				
+			} else if(label.equals(consonant) && i == timeList.size() - 1) {
+				String sTime = timeList.get(i - 1).substring(4, 12);
+				String eTime = line.substring(4, 12);
+				Consonants toAdd = getConsonant(filename, sTime, eTime);
+				consonantList.add(toAdd);
+			}
+			
+		}
+	}
+	
+	private static void writeConsonantFiles(String fileName, ArrayList<Consonants> consonantList) throws IOException {
+		Writer out = new OutputStreamWriter(new FileOutputStream(fileName));
+		String NL = System.getProperty("line.separator");
+		
+		for(Consonants c:consonantList) {
+			out.write(c.getFileName() + "\t" + c.getStartTime() + "\t" + c.getEndTime() + NL);
+		}
+		out.close();
+	}
+	
+	private static Consonants getConsonant(String fileName, String sTime, String eTime) {
+		Consonants c = new Consonants();
+		c.setFileName(fileName);
+		c.setStartTime(sTime);
+		c.setEndTime(eTime);
+		return c;
+	}
+}
